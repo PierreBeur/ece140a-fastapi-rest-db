@@ -33,7 +33,18 @@ def db_create_user(first_name:str, last_name:str) -> int:
   3. Close the connection to the database
   4. Return the new user's ID (this is stored in the cursor's 'lastrowid' attribute after execution)
   '''
-  return 0
+  # Connect
+  db = mysql.connect(user=db_user, passwd=db_pass, database=db_name, host=db_host)
+  cursor = db.cursor()
+  # Query and fetch response
+  cursor.execute(f"INSERT INTO users (first_name, last_name) VALUES ({first_name}, {last_name});")
+  id = cursor.lastrowid
+  # Commit the changes
+  db.commit()
+  # Disconnect
+  cursor.close()
+  db.close()
+  return id
 
 # SELECT SQL query
 def db_select_users(user_id:int=None) -> list:
@@ -44,7 +55,20 @@ def db_select_users(user_id:int=None) -> list:
   4. Close the connection to the database
   5. Return the retrieved record(s)
   '''
-  return []
+  # Connect
+  db = mysql.connect(user=db_user, passwd=db_pass, database=db_name, host=db_host)
+  cursor = db.cursor()
+  # Query and fetch response
+  if user_id == None:
+    cursor.execute(f"SELECT id, first_name, last_name FROM users;")
+    response = cursor.fetchall()
+  else:
+    cursor.execute(f"SELECT id, first_name, last_name FROM users WHERE id={user_id};")
+    response = cursor.fetchone()
+  # Disconnect
+  cursor.close()
+  db.close()
+  return response
 
 # UPDATE SQL query
 def db_update_user(user_id:int, first_name:str, last_name:str) -> bool:
@@ -55,7 +79,19 @@ def db_update_user(user_id:int, first_name:str, last_name:str) -> bool:
   4. Return True if a row in the database was successfully updated and False otherwise (you can
      check how many records were affected by looking at the cursor's 'rowcount' attribute)
   '''
-  return False
+  # Connect
+  db = mysql.connect(user=db_user, passwd=db_pass, database=db_name, host=db_host)
+  cursor = db.cursor()
+  # Query and fetch response
+  values = f'first_name="{first_name}", last_name="{last_name}"'
+  cursor.execute(f'UPDATE users SET {values} WHERE user_id="{user_id}"')
+  rowcount = cursor.rowcount
+  # Commit the changes
+  db.commit()
+  # Disconnect
+  cursor.close()
+  db.close()
+  return rowcount > 0
 
 # DELETE SQL query
 def db_delete_user(user_id:int) -> bool:
@@ -66,7 +102,18 @@ def db_delete_user(user_id:int) -> bool:
   4. Return True if a row in the database was successfully deleted and False otherwise (you can
      check how many records were affected by looking at the cursor's 'rowcount' attribute)
   '''
-  return False
+  # Connect
+  db = mysql.connect(user=db_user, passwd=db_pass, database=db_name, host=db_host)
+  cursor = db.cursor()
+  # Query and fetch response
+  cursor.execute(f'DELETE FROM users WHERE user_id = "{user_id}";')
+  rowcount = cursor.rowcount
+  # Commit the changes
+  db.commit()
+  # Disconnect
+  cursor.close()
+  db.close()
+  return rowcount > 0
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 # Home route to load the main page in a templatized fashion
