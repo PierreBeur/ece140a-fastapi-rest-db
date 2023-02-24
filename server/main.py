@@ -136,7 +136,18 @@ def get_users() -> dict:
     'id', 'first_name', and 'last_name'
   3. Return this collection as a JSON object, where the key is 'users' and the value is the list
   '''
-  return {'users': []}
+  # Get rows from database
+  rows = db_select_users()
+  # Parse rows
+  response = []
+  if rows:
+    for row in rows:
+      response.append({
+        'id': row[0],
+        'first_name': row[1],
+        'last_name': row[2]
+      })
+  return {'users': response}
 
 # GET /users/{user_id}
 # Used to query a single user
@@ -148,7 +159,17 @@ def get_user(user_id:int) -> dict:
   3. Otherwise, format the result as JSON where the keys are: 'id', 'first_name', and 'last_name'
   4. Return this object
   '''
-  return {}
+  # Get row from database
+  row = db_select_users(user_id)
+  # Parse row
+  response = {}
+  if row:
+    response = {
+        'id': row[0],
+        'first_name': row[1],
+        'last_name': row[2]
+      }
+  return response
 
 # POST /users
 # Used to create a new user
@@ -160,7 +181,12 @@ async def post_user(request:Request) -> dict:
   3. Create a new user in the database
   4. Return the user record back to the client as JSON
   '''
-  return {}
+  json = await request.json()
+  first_name = json['first_name']
+  last_name = json['last_name']
+  user_id = db_create_user(first_name, last_name)
+  response = get_user(user_id)
+  return response
 
 # PUT /users/{user_id}
 @app.put('/users/{user_id}')
@@ -170,7 +196,11 @@ async def put_user(user_id:int, request:Request) -> dict:
   2. Attempt to update the user first and last name in the database
   3. Return the update status under the 'success' key
   '''
-  return {'success': False}
+  json = await request.json()
+  first_name = json['first_name']
+  last_name = json['last_name']
+  status = db_update_user(user_id, first_name, last_name)
+  return {'success': status}
 
 # DELETE /users/{user_id}
 @app.delete('/users/{user_id}')
@@ -179,7 +209,8 @@ def delete_user(user_id:int) -> dict:
   1. Attempt to delete the user from the database
   2. Return the delete status under the 'success' key
   '''
-  return {'success': False}
+  status = db_delete_user(user_id)
+  return {'success': status}
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 # If running the server directly from Python as a module
