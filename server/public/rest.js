@@ -40,6 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
         5. Update the content of the newly added row with the ID, first_name, and last_name of the user
       6. Remove the alert below this comment block
     */
+   const first_name = '';
+   const last_name = '';
+   const user = {'first_name': first_name, 'last_name': last_name};
+   server_request('/users', user, 'POST');
 
     alert('Feature is incomplete!');
 
@@ -72,6 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
         4. Update the row corresponding to this user with the new data if successful
         5. Switch back the main container's mode to 'viewing'
     */
+   if (save_button_clicked) {
+      const user_id = '0';
+      const first_name = '';
+      const last_name = '';
+      const user = {'first_name': first_name, 'last_name': last_name};
+      server_request(`/users/${user_id}`, user, 'PUT');
+   }
 
     // Submit DELETE request and delete the row if successful
     /*
@@ -80,6 +91,13 @@ document.addEventListener("DOMContentLoaded", () => {
       3. Submit a server DELETE request and when the server responds...
         4. Remove the row if successful
     */
+    if (delete_button_clicked) {
+      const user_id = '0';
+      const first_name = '';
+      const last_name = '';
+      const user = {'first_name': first_name, 'last_name': last_name};
+      server_request(`/users/${user_id}`, user, 'PUT');
+    }
   });
 
 });
